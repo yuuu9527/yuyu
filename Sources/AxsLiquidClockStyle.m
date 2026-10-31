@@ -86,11 +86,25 @@ static BOOL axs_liquidclock_isNowPlaying(void) {
 }
 
 
+static NSNumber *axs_liquidclock_axisTag(const char *tag) {
+    uint32_t value = ((uint32_t)(unsigned char)tag[0] << 24) |
+                     ((uint32_t)(unsigned char)tag[1] << 16) |
+                     ((uint32_t)(unsigned char)tag[2] << 8) |
+                     (uint32_t)(unsigned char)tag[3];
+    return @(value);
+}
+
 static UIFont *axs_liquidclock_variationFont(UIFont *base, CGFloat size, NSDictionary *axes) {
     CTFontRef font = (__bridge CTFontRef)base;
     if (!font) return nil;
-    CTFontRef result = CTFontCreateCopyWithVariation(font, size,
-        (__bridge CFDictionaryRef)axes);
+    NSDictionary *attributes = @{
+        (__bridge NSString *)kCTFontVariationAttribute: axes,
+    };
+    CTFontDescriptorRef descriptor = CTFontDescriptorCreateWithAttributes(
+        (__bridge CFDictionaryRef)attributes);
+    if (!descriptor) return nil;
+    CTFontRef result = CTFontCreateWithFontDescriptor(descriptor, size, NULL);
+    CFRelease(descriptor);
     if (!result) return nil;
     return (__bridge_transfer UIFont *)result;
 }
@@ -199,10 +213,10 @@ static UIFont *axs_liquidclock_variationFont(UIFont *base, CGFloat size, NSDicti
             if (liquid) {
                 // 四个可变轴对应参考插件的 Width / Height / Weight / Softness。
                 NSDictionary *axes = @{
-                    @"wdth": @([self axs_liquidclock_fontWidth]),
-                    @"HGHT": @([self axs_liquidclock_fontHeight]),
-                    @"wght": @([self axs_liquidclock_fontWeight]),
-                    @"SOFT": @([self axs_liquidclock_fontSoftness]),
+                    axs_liquidclock_axisTag("wdth"): @([self axs_liquidclock_fontWidth]),
+                    axs_liquidclock_axisTag("HGHT"): @([self axs_liquidclock_fontHeight]),
+                    axs_liquidclock_axisTag("wght"): @([self axs_liquidclock_fontWeight]),
+                    axs_liquidclock_axisTag("SOFT"): @([self axs_liquidclock_fontSoftness]),
                 };
                 UIFont *varied = axs_liquidclock_variationFont(liquid, size, axes);
                 return varied ?: liquid;
