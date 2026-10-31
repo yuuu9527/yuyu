@@ -32,13 +32,6 @@
             <key>max</key><real>2.0</real>
         </dict>
         <dict>
-            <key>cell</key><string>PSSwitchCell</string>
-            <key>label</key><string>圆体字形</string>
-            <key>key</key><string>roundedFont</string>
-            <key>defaults</key><string>com.axs.liquidclock</string>
-            <key>default</key><true/>
-        </dict>
-        <dict>
             <key>cell</key><string>PSTitleValueCell</string>
             <key>cellClass</key><string>AxsLiquidClockSliderCell</string>
             <key>label</key><string>字重</string>
@@ -49,9 +42,33 @@
             <key>max</key><real>10.0</real>
         </dict>
         <dict>
+            <key>cell</key><string>PSTitleValueCell</string>
+            <key>cellClass</key><string>AxsLiquidClockSliderCell</string>
+            <key>label</key><string>字距</string>
+            <key>key</key><string>letterSpacing</string>
+            <key>defaults</key><string>com.axs.liquidclock</string>
+            <key>default</key><real>0.0</real>
+            <key>min</key><real>-2.0</real>
+            <key>max</key><real>2.0</real>
+        </dict>
+        <dict>
+            <key>cell</key><string>PSSwitchCell</string>
+            <key>label</key><string>圆体字形</string>
+            <key>key</key><string>roundedFont</string>
+            <key>defaults</key><string>com.axs.liquidclock</string>
+            <key>default</key><true/>
+        </dict>
+        <dict>
             <key>cell</key><string>PSGroupCell</string>
-            <key>label</key><string>玻璃质感</string>
-            <key>footerText</key><string>发光为白色柔光外扩，0 表示关闭。</string>
+            <key>label</key><string>液态效果</string>
+            <key>footerText</key><string>开启液态数字字体后会读取设备上已安装的可变数字字体，未找到时自动退回系统字体。</string>
+        </dict>
+        <dict>
+            <key>cell</key><string>PSSwitchCell</string>
+            <key>label</key><string>液态数字字体</string>
+            <key>key</key><string>liquidFont</string>
+            <key>defaults</key><string>com.axs.liquidclock</string>
+            <key>default</key><true/>
         </dict>
         <dict>
             <key>cell</key><string>PSTitleValueCell</string>
@@ -62,6 +79,10 @@
             <key>default</key><real>0.35</real>
             <key>min</key><real>0.0</real>
             <key>max</key><real>1.0</real>
+        </dict>
+        <dict>
+            <key>cell</key><string>PSGroupCell</string>
+            <key>footerText</key><string>by 鱼教兽</string>
         </dict>
     </array>
 </dict>

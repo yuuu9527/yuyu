@@ -10,7 +10,7 @@ include $(THEOS)/makefiles/common.mk
 TWEAK_NAME = AxsLiquidClock
 AxsLiquidClock_FILES = $(wildcard Hooks/*.xm Sources/*.m)
 AxsLiquidClock_CFLAGS = -fobjc-arc -I./Headers -I./Sources
-AxsLiquidClock_FRAMEWORKS = UIKit Foundation CoreFoundation
+AxsLiquidClock_FRAMEWORKS = UIKit Foundation CoreFoundation CoreText
 AxsLiquidClock_LIBRARIES = substrate
 
 include $(THEOS_MAKE_PATH)/tweak.mk
