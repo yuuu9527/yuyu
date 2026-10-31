@@ -82,6 +82,11 @@ jobs:
           brew install ldid dpkg xz
           echo "$(brew --prefix)/bin" >> "$GITHUB_PATH"
 
+      - name: Prepare Maintainer Scripts
+        run: |
+          # 仓库里维护脚本没有执行位（部分工作区不支持 chmod），在这里补上
+          chmod 0755 clock26/layout/DEBIAN/postinst
+
       - name: Build Package
         run: |
           cd clock26
