@@ -67,6 +67,24 @@ static NSString *axs_liquidclock_externalFontName(void) {
     return resolved ? cachedName : nil;
 }
 
+// 锁屏正在播放带封面的音乐时，系统会把时钟缩小；插件跟随缩回原始大小，避免压住封面。
+static BOOL axs_liquidclock_isNowPlaying(void) {
+    static Class mediaControllerClass;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        mediaControllerClass = NSClassFromString(@"SBMediaController");
+    });
+    if (!mediaControllerClass) return NO;
+    id controller = nil;
+    if ([mediaControllerClass respondsToSelector:@selector(sharedInstance)]) {
+        controller = [mediaControllerClass performSelector:@selector(sharedInstance)];
+    }
+    if (controller && [controller respondsToSelector:@selector(isPlaying)]) {
+        return [controller performSelector:@selector(isPlaying)] != nil;
+    }
+    return NO;
+}
+
 @implementation AxsLiquidClockStyle
 
 + (instancetype)axs_liquidclock_style {
@@ -92,6 +110,11 @@ static NSString *axs_liquidclock_externalFontName(void) {
     return axs_liquidclock_clamp(number, minimum, maximum);
 }
 
+- (BOOL)axs_liquidclock_shouldShrink {
+    id value = [self axs_liquidclock_valueForKey:@"shrinkOnMusic" defaultValue:@(YES)];
+    return [value isKindOfClass:[NSNumber class]] ? [value boolValue] : YES;
+}
+
 - (BOOL)axs_liquidclock_isEnabled {
     id value = [self axs_liquidclock_valueForKey:@"enabled" defaultValue:@(NO)];
     return [value isKindOfClass:[NSNumber class]] ? [value boolValue] : NO;
@@ -99,6 +122,13 @@ static NSString *axs_liquidclock_externalFontName(void) {
 
 - (double)axs_liquidclock_scale {
     return [self axs_liquidclock_doubleForKey:@"clockScale" fallback:1.5 minimum:0.8 maximum:2.2];
+}
+
+- (double)axs_liquidclock_effectiveScale {
+    if ([self axs_liquidclock_shouldShrink] && axs_liquidclock_isNowPlaying()) {
+        return 1.0;
+    }
+    return [self axs_liquidclock_scale];
 }
 
 // 面板用 0~10 的滑条，消费端换算为 0~1 的字重系数。
@@ -132,7 +162,7 @@ static NSString *axs_liquidclock_externalFontName(void) {
     UIFont *base = [baseFont isKindOfClass:[UIFont class]]
         ? baseFont
         : [UIFont systemFontOfSize:72.0 weight:UIFontWeightSemibold];
-    CGFloat size = MAX(10.0, round(base.pointSize * [self axs_liquidclock_scale]));
+    CGFloat size = MAX(10.0, round(base.pointSize * [self axs_liquidclock_effectiveScale]));
     CGFloat weight = UIFontWeightRegular +
         [self axs_liquidclock_weightRatio] * (UIFontWeightBlack - UIFontWeightRegular);
 
@@ -190,7 +220,7 @@ static NSString *axs_liquidclock_externalFontName(void) {
     UIFont *base = [original isKindOfClass:[UIFont class]] ? original : label.font;
     NSString *signature = [NSString stringWithFormat:@"%@|%@|%.2f|%.2f|%.2f|%.2f|%ld|%ld|%.2f|%.2f",
         base.fontName, label.text ?: @"",
-        base.pointSize, [self axs_liquidclock_scale], [self axs_liquidclock_weightRatio],
+        base.pointSize, [self axs_liquidclock_effectiveScale], [self axs_liquidclock_weightRatio],
         [self axs_liquidclock_tracking],
         (long)([self axs_liquidclock_isRounded] ? 1 : 0),
         (long)([self axs_liquidclock_usesLiquidFont] ? 1 : 0),

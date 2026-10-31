@@ -71,6 +71,13 @@
             <key>default</key><true/>
         </dict>
         <dict>
+            <key>cell</key><string>PSSwitchCell</string>
+            <key>label</key><string>播放音乐时收缩</string>
+            <key>key</key><string>shrinkOnMusic</string>
+            <key>defaults</key><string>com.axs.liquidclock</string>
+            <key>default</key><true/>
+        </dict>
+        <dict>
             <key>cell</key><string>PSTitleValueCell</string>
             <key>cellClass</key><string>AxsLiquidClockSliderCell</string>
             <key>label</key><string>发光强度</string>
