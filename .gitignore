@@ -1,0 +1,10 @@
+# Theos build output
+packages/
+.theos/
+obj/
+*.deb
+*.dylib
+*.zip
+
+# Local tooling
+.DS_Store

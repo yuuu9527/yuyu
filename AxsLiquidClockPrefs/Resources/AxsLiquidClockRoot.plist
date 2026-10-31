@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>title</key><string>iOS26 时间样式</string>
+    <key>items</key>
+    <array>
+        <dict>
+            <key>cell</key><string>PSGroupCell</string>
+            <key>label</key><string>基本设置</string>
+            <key>footerText</key><string>修改后立即生效，无需注销。关闭开关会还原系统原始时钟字体。</string>
+        </dict>
+        <dict>
+            <key>cell</key><string>PSSwitchCell</string>
+            <key>label</key><string>启用插件</string>
+            <key>key</key><string>enabled</string>
+            <key>defaults</key><string>com.axs.liquidclock</string>
+            <key>default</key><false/>
+        </dict>
+        <dict>
+            <key>cell</key><string>PSGroupCell</string>
+            <key>label</key><string>时钟样式</string>
+        </dict>
+        <dict>
+            <key>cell</key><string>PSTitleValueCell</string>
+            <key>cellClass</key><string>AxsLiquidClockSliderCell</string>
+            <key>label</key><string>字号倍数</string>
+            <key>key</key><string>clockScale</string>
+            <key>defaults</key><string>com.axs.liquidclock</string>
+            <key>default</key><real>1.2</real>
+            <key>min</key><real>0.8</real>
+            <key>max</key><real>2.0</real>
+        </dict>
+        <dict>
+            <key>cell</key><string>PSSwitchCell</string>
+            <key>label</key><string>圆体字形</string>
+            <key>key</key><string>roundedFont</string>
+            <key>defaults</key><string>com.axs.liquidclock</string>
+            <key>default</key><true/>
+        </dict>
+        <dict>
+            <key>cell</key><string>PSTitleValueCell</string>
+            <key>cellClass</key><string>AxsLiquidClockSliderCell</string>
+            <key>label</key><string>字重</string>
+            <key>key</key><string>clockWeight</string>
+            <key>defaults</key><string>com.axs.liquidclock</string>
+            <key>default</key><real>6.2</real>
+            <key>min</key><real>0.0</real>
+            <key>max</key><real>10.0</real>
+        </dict>
+        <dict>
+            <key>cell</key><string>PSGroupCell</string>
+            <key>label</key><string>玻璃质感</string>
+            <key>footerText</key><string>发光为白色柔光外扩，0 表示关闭。</string>
+        </dict>
+        <dict>
+            <key>cell</key><string>PSTitleValueCell</string>
+            <key>cellClass</key><string>AxsLiquidClockSliderCell</string>
+            <key>label</key><string>发光强度</string>
+            <key>key</key><string>glowStrength</string>
+            <key>defaults</key><string>com.axs.liquidclock</string>
+            <key>default</key><real>0.35</real>
+            <key>min</key><real>0.0</real>
+            <key>max</key><real>1.0</real>
+        </dict>
+    </array>
+</dict>
+</plist>

@@ -1,0 +1,11 @@
+Package: com.axs.liquidclock
+Name: iOS26 时间样式
+Version: 5.2.0
+Architecture: iphoneos-arm
+Description: 把锁屏时钟改成 iOS 26 风格：更大、更粗、圆体字形与玻璃柔光
+Maintainer: Axs
+Author: Axs
+Section: Axs-Tweaks
+Depends: mobilesubstrate, preferenceloader
+Icon: https://axs66.github.io/pro/icon/liquidclock.png
+Sileodepiction: https://axs66.github.io/pro/sileodepiction/liquidclock/js.json
