@@ -19,10 +19,10 @@ static NSString *axs_liquidclock_externalFontPath(void) {
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         NSArray<NSString *> *candidates = @[
+            @"/var/jb/Library/PreferenceBundles/AxsLiquidClockPrefs.bundle/SFAdaptiveSoftNumeric-VF.otf",
+            @"/Library/PreferenceBundles/AxsLiquidClockPrefs.bundle/SFAdaptiveSoftNumeric-VF.otf",
             @"/var/jb/Library/PreferenceBundles/LiquidAssPrefs.bundle/SFAdaptiveSoftNumeric-VF.otf",
             @"/Library/PreferenceBundles/LiquidAssPrefs.bundle/SFAdaptiveSoftNumeric-VF.otf",
-            @"/var/jb/Library/PreferenceBundles/YuLiquidClockPrefs.bundle/SFAdaptiveSoftNumeric-VF.otf",
-            @"/Library/PreferenceBundles/YuLiquidClockPrefs.bundle/SFAdaptiveSoftNumeric-VF.otf",
         ];
         NSFileManager *manager = [NSFileManager defaultManager];
         for (NSString *path in candidates) {
@@ -121,7 +121,7 @@ static BOOL axs_liquidclock_isNowPlaying(void) {
 }
 
 - (double)axs_liquidclock_scale {
-    return [self axs_liquidclock_doubleForKey:@"clockScale" fallback:1.5 minimum:0.8 maximum:2.2];
+    return [self axs_liquidclock_doubleForKey:@"clockScale" fallback:1.7 minimum:1.0 maximum:2.4];
 }
 
 - (double)axs_liquidclock_effectiveScale {
