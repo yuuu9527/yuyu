@@ -6,6 +6,7 @@
 
 static const void *AxsLiquidClockOriginalFontKey = &AxsLiquidClockOriginalFontKey;
 static const void *AxsLiquidClockAppliedKey = &AxsLiquidClockAppliedKey;
+static const void *AxsLiquidClockOriginalColorKey = &AxsLiquidClockOriginalColorKey;
 
 static double axs_liquidclock_clamp(double value, double minimum, double maximum) {
     if (!isfinite(value)) return minimum;
@@ -97,12 +98,12 @@ static NSString *axs_liquidclock_externalFontName(void) {
 }
 
 - (double)axs_liquidclock_scale {
-    return [self axs_liquidclock_doubleForKey:@"clockScale" fallback:1.2 minimum:0.8 maximum:2.0];
+    return [self axs_liquidclock_doubleForKey:@"clockScale" fallback:1.5 minimum:0.8 maximum:2.2];
 }
 
 // 面板用 0~10 的滑条，消费端换算为 0~1 的字重系数。
 - (double)axs_liquidclock_weightRatio {
-    return [self axs_liquidclock_doubleForKey:@"clockWeight" fallback:6.2 minimum:0.0 maximum:10.0] / 10.0;
+    return [self axs_liquidclock_doubleForKey:@"clockWeight" fallback:5.0 minimum:0.0 maximum:10.0] / 10.0;
 }
 
 - (BOOL)axs_liquidclock_isRounded {
@@ -115,12 +116,16 @@ static NSString *axs_liquidclock_externalFontName(void) {
     return [value isKindOfClass:[NSNumber class]] ? [value boolValue] : YES;
 }
 
+- (double)axs_liquidclock_opacity {
+    return [self axs_liquidclock_doubleForKey:@"clockOpacity" fallback:0.8 minimum:0.3 maximum:1.0];
+}
+
 - (double)axs_liquidclock_glow {
-    return [self axs_liquidclock_doubleForKey:@"glowStrength" fallback:0.35 minimum:0.0 maximum:1.0];
+    return [self axs_liquidclock_doubleForKey:@"glowStrength" fallback:0.25 minimum:0.0 maximum:1.0];
 }
 
 - (double)axs_liquidclock_tracking {
-    return [self axs_liquidclock_doubleForKey:@"letterSpacing" fallback:0.0 minimum:-2.0 maximum:2.0];
+    return [self axs_liquidclock_doubleForKey:@"letterSpacing" fallback:-0.3 minimum:-2.0 maximum:2.0];
 }
 
 - (UIFont *)axs_liquidclock_fontForBaseFont:(UIFont *)baseFont {
@@ -160,6 +165,12 @@ static NSString *axs_liquidclock_externalFontName(void) {
     UIFont *original = objc_getAssociatedObject(label, AxsLiquidClockOriginalFontKey);
     if (![self axs_liquidclock_isEnabled]) {
         if (original) {
+            UIColor *originalColor = objc_getAssociatedObject(label, AxsLiquidClockOriginalColorKey);
+            if (originalColor) {
+                label.textColor = originalColor;
+                objc_setAssociatedObject(label, AxsLiquidClockOriginalColorKey, nil,
+                                         OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            }
             label.font = original;
             objc_setAssociatedObject(label, AxsLiquidClockOriginalFontKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
             objc_setAssociatedObject(label, AxsLiquidClockAppliedKey, nil, OBJC_ASSOCIATION_COPY_NONATOMIC);
@@ -177,15 +188,23 @@ static NSString *axs_liquidclock_externalFontName(void) {
     }
 
     UIFont *base = [original isKindOfClass:[UIFont class]] ? original : label.font;
-    NSString *signature = [NSString stringWithFormat:@"%@|%@|%.2f|%.2f|%.2f|%.2f|%ld|%ld|%.2f",
+    NSString *signature = [NSString stringWithFormat:@"%@|%@|%.2f|%.2f|%.2f|%.2f|%ld|%ld|%.2f|%.2f",
         base.fontName, label.text ?: @"",
         base.pointSize, [self axs_liquidclock_scale], [self axs_liquidclock_weightRatio],
         [self axs_liquidclock_tracking],
         (long)([self axs_liquidclock_isRounded] ? 1 : 0),
         (long)([self axs_liquidclock_usesLiquidFont] ? 1 : 0),
-        [self axs_liquidclock_glow]];
+        [self axs_liquidclock_glow], [self axs_liquidclock_opacity]];
     if ([objc_getAssociatedObject(label, AxsLiquidClockAppliedKey) isEqual:signature]) return;
     objc_setAssociatedObject(label, AxsLiquidClockAppliedKey, signature, OBJC_ASSOCIATION_COPY_NONATOMIC);
+
+    if (!objc_getAssociatedObject(label, AxsLiquidClockOriginalColorKey)) {
+        objc_setAssociatedObject(label, AxsLiquidClockOriginalColorKey, label.textColor,
+                                 OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    }
+    // 液态玻璃观感：半透明冷白，避免死白压过壁纸。
+    label.textColor = [UIColor colorWithRed:0.86 green:0.90 blue:1.0
+                                      alpha:[self axs_liquidclock_opacity]];
 
     UIFont *font = [self axs_liquidclock_fontForBaseFont:base];
     label.font = font;
@@ -193,7 +212,9 @@ static NSString *axs_liquidclock_externalFontName(void) {
     double tracking = [self axs_liquidclock_tracking];
     if (fabs(tracking) > 0.001 && label.text.length > 0) {
         label.attributedText = [[NSAttributedString alloc] initWithString:label.text
-            attributes:@{NSKernAttributeName: @(tracking), NSFontAttributeName: font}];
+            attributes:@{NSKernAttributeName: @(tracking),
+                         NSFontAttributeName: font,
+                         NSForegroundColorAttributeName: label.textColor}];
     }
 
     double glow = [self axs_liquidclock_glow];

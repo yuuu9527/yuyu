@@ -27,9 +27,9 @@
             <key>label</key><string>字号倍数</string>
             <key>key</key><string>clockScale</string>
             <key>defaults</key><string>com.axs.liquidclock</string>
-            <key>default</key><real>1.2</real>
+            <key>default</key><real>1.5</real>
             <key>min</key><real>0.8</real>
-            <key>max</key><real>2.0</real>
+            <key>max</key><real>2.2</real>
         </dict>
         <dict>
             <key>cell</key><string>PSTitleValueCell</string>
@@ -37,7 +37,7 @@
             <key>label</key><string>字重</string>
             <key>key</key><string>clockWeight</string>
             <key>defaults</key><string>com.axs.liquidclock</string>
-            <key>default</key><real>6.2</real>
+            <key>default</key><real>5.0</real>
             <key>min</key><real>0.0</real>
             <key>max</key><real>10.0</real>
         </dict>
@@ -47,7 +47,7 @@
             <key>label</key><string>字距</string>
             <key>key</key><string>letterSpacing</string>
             <key>defaults</key><string>com.axs.liquidclock</string>
-            <key>default</key><real>0.0</real>
+            <key>default</key><real>-0.3</real>
             <key>min</key><real>-2.0</real>
             <key>max</key><real>2.0</real>
         </dict>
@@ -76,8 +76,18 @@
             <key>label</key><string>发光强度</string>
             <key>key</key><string>glowStrength</string>
             <key>defaults</key><string>com.axs.liquidclock</string>
-            <key>default</key><real>0.35</real>
+            <key>default</key><real>0.25</real>
             <key>min</key><real>0.0</real>
+            <key>max</key><real>1.0</real>
+        </dict>
+        <dict>
+            <key>cell</key><string>PSTitleValueCell</string>
+            <key>cellClass</key><string>AxsLiquidClockSliderCell</string>
+            <key>label</key><string>通透度</string>
+            <key>key</key><string>clockOpacity</string>
+            <key>defaults</key><string>com.axs.liquidclock</string>
+            <key>default</key><real>0.8</real>
+            <key>min</key><real>0.3</real>
             <key>max</key><real>1.0</real>
         </dict>
         <dict>
