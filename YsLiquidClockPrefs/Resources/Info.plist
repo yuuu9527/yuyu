@@ -2,12 +2,12 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>CFBundleExecutable</key><string>AxsLiquidClockPrefs</string>
-    <key>CFBundleIdentifier</key><string>com.axs.liquidclock.preferences</string>
+    <key>CFBundleExecutable</key><string>YsLiquidClockPrefs</string>
+    <key>CFBundleIdentifier</key><string>com.ys.liquidclock.preferences</string>
     <key>CFBundleName</key><string>iOS26 时间样式</string>
     <key>CFBundlePackageType</key><string>BNDL</string>
     <key>CFBundleShortVersionString</key><string>5.2.0</string>
     <key>CFBundleVersion</key><string>5.2.0</string>
-    <key>NSPrincipalClass</key><string>AxsLiquidClockRootListController</string>
+    <key>NSPrincipalClass</key><string>YsLiquidClockRootListController</string>
 </dict>
 </plist>

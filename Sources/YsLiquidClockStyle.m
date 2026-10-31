@@ -1,26 +1,26 @@
-#import "AxsLiquidClockStyle.h"
-#import "AxsLiquidClockConfig.h"
+#import "YsLiquidClockStyle.h"
+#import "YsLiquidClockConfig.h"
 #import <CoreText/CoreText.h>
 #import <objc/runtime.h>
 #import <math.h>
 
-static const void *AxsLiquidClockOriginalFontKey = &AxsLiquidClockOriginalFontKey;
-static const void *AxsLiquidClockAppliedKey = &AxsLiquidClockAppliedKey;
-static const void *AxsLiquidClockOriginalColorKey = &AxsLiquidClockOriginalColorKey;
+static const void *YsLiquidClockOriginalFontKey = &YsLiquidClockOriginalFontKey;
+static const void *YsLiquidClockAppliedKey = &YsLiquidClockAppliedKey;
+static const void *YsLiquidClockOriginalColorKey = &YsLiquidClockOriginalColorKey;
 
-static double axs_liquidclock_clamp(double value, double minimum, double maximum) {
+static double ys_liquidclock_clamp(double value, double minimum, double maximum) {
     if (!isfinite(value)) return minimum;
     return fmax(minimum, fmin(maximum, value));
 }
 
 // 液态数字字体来自已安装的 LiquidAss 资源包；找不到就退回系统字体，不打包他人资源。
-static NSString *axs_liquidclock_externalFontPath(void) {
+static NSString *ys_liquidclock_externalFontPath(void) {
     static NSString *cachedPath;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         NSArray<NSString *> *candidates = @[
-            @"/var/jb/Library/PreferenceBundles/AxsLiquidClockPrefs.bundle/SFAdaptiveSoftNumeric-VF.otf",
-            @"/Library/PreferenceBundles/AxsLiquidClockPrefs.bundle/SFAdaptiveSoftNumeric-VF.otf",
+            @"/var/jb/Library/PreferenceBundles/YsLiquidClockPrefs.bundle/SFAdaptiveSoftNumeric-VF.otf",
+            @"/Library/PreferenceBundles/YsLiquidClockPrefs.bundle/SFAdaptiveSoftNumeric-VF.otf",
             @"/var/jb/Library/PreferenceBundles/LiquidAssPrefs.bundle/SFAdaptiveSoftNumeric-VF.otf",
             @"/Library/PreferenceBundles/LiquidAssPrefs.bundle/SFAdaptiveSoftNumeric-VF.otf",
         ];
@@ -35,13 +35,13 @@ static NSString *axs_liquidclock_externalFontPath(void) {
     return cachedPath;
 }
 
-static NSString *axs_liquidclock_externalFontName(void) {
+static NSString *ys_liquidclock_externalFontName(void) {
     static NSString *cachedName;
     static BOOL resolved;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         resolved = YES;
-        NSString *path = axs_liquidclock_externalFontPath();
+        NSString *path = ys_liquidclock_externalFontPath();
         if (path.length == 0) return;
         NSURL *url = [NSURL fileURLWithPath:path];
         CFErrorRef error = NULL;
@@ -68,7 +68,7 @@ static NSString *axs_liquidclock_externalFontName(void) {
 }
 
 // 锁屏正在播放带封面的音乐时，系统会把时钟缩小；插件跟随缩回原始大小，避免压住封面。
-static BOOL axs_liquidclock_isNowPlaying(void) {
+static BOOL ys_liquidclock_isNowPlaying(void) {
     static Class mediaControllerClass;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
@@ -86,7 +86,7 @@ static BOOL axs_liquidclock_isNowPlaying(void) {
 }
 
 
-static NSNumber *axs_liquidclock_axisTag(const char *tag) {
+static NSNumber *ys_liquidclock_axisTag(const char *tag) {
     uint32_t value = ((uint32_t)(unsigned char)tag[0] << 24) |
                      ((uint32_t)(unsigned char)tag[1] << 16) |
                      ((uint32_t)(unsigned char)tag[2] << 8) |
@@ -94,7 +94,7 @@ static NSNumber *axs_liquidclock_axisTag(const char *tag) {
     return @(value);
 }
 
-static UIFont *axs_liquidclock_variationFont(UIFont *base, CGFloat size, NSDictionary *axes) {
+static UIFont *ys_liquidclock_variationFont(UIFont *base, CGFloat size, NSDictionary *axes) {
     CTFontRef font = (__bridge CTFontRef)base;
     if (!font) return nil;
     NSDictionary *attributes = @{
@@ -109,10 +109,10 @@ static UIFont *axs_liquidclock_variationFont(UIFont *base, CGFloat size, NSDicti
     return (__bridge_transfer UIFont *)result;
 }
 
-@implementation AxsLiquidClockStyle
+@implementation YsLiquidClockStyle
 
-+ (instancetype)axs_liquidclock_style {
-    static AxsLiquidClockStyle *style;
++ (instancetype)ys_liquidclock_style {
+    static YsLiquidClockStyle *style;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         style = [[self alloc] init];
@@ -120,112 +120,112 @@ static UIFont *axs_liquidclock_variationFont(UIFont *base, CGFloat size, NSDicti
     return style;
 }
 
-- (id)axs_liquidclock_valueForKey:(NSString *)key defaultValue:(id)defaultValue {
-    return [[AxsLiquidClockConfig axs_liquidclock_shared] axs_liquidclock_valueForKey:key
+- (id)ys_liquidclock_valueForKey:(NSString *)key defaultValue:(id)defaultValue {
+    return [[YsLiquidClockConfig ys_liquidclock_shared] ys_liquidclock_valueForKey:key
                                                                         defaultValue:defaultValue];
 }
 
-- (double)axs_liquidclock_doubleForKey:(NSString *)key
+- (double)ys_liquidclock_doubleForKey:(NSString *)key
                               fallback:(double)fallback
                                minimum:(double)minimum
                                maximum:(double)maximum {
-    id value = [self axs_liquidclock_valueForKey:key defaultValue:@(fallback)];
+    id value = [self ys_liquidclock_valueForKey:key defaultValue:@(fallback)];
     double number = [value isKindOfClass:[NSNumber class]] ? [value doubleValue] : fallback;
-    return axs_liquidclock_clamp(number, minimum, maximum);
+    return ys_liquidclock_clamp(number, minimum, maximum);
 }
 
-- (BOOL)axs_liquidclock_shouldShrink {
-    id value = [self axs_liquidclock_valueForKey:@"shrinkOnMusic" defaultValue:@(YES)];
+- (BOOL)ys_liquidclock_shouldShrink {
+    id value = [self ys_liquidclock_valueForKey:@"shrinkOnMusic" defaultValue:@(YES)];
     return [value isKindOfClass:[NSNumber class]] ? [value boolValue] : YES;
 }
 
-- (BOOL)axs_liquidclock_isEnabled {
-    id value = [self axs_liquidclock_valueForKey:@"enabled" defaultValue:@(NO)];
+- (BOOL)ys_liquidclock_isEnabled {
+    id value = [self ys_liquidclock_valueForKey:@"enabled" defaultValue:@(NO)];
     return [value isKindOfClass:[NSNumber class]] ? [value boolValue] : NO;
 }
 
-- (double)axs_liquidclock_scale {
-    return [self axs_liquidclock_doubleForKey:@"clockScale" fallback:1.7 minimum:1.0 maximum:2.4];
+- (double)ys_liquidclock_scale {
+    return [self ys_liquidclock_doubleForKey:@"clockScale" fallback:1.7 minimum:1.0 maximum:2.4];
 }
 
-- (double)axs_liquidclock_effectiveScale {
-    if ([self axs_liquidclock_shouldShrink] && axs_liquidclock_isNowPlaying()) {
+- (double)ys_liquidclock_effectiveScale {
+    if ([self ys_liquidclock_shouldShrink] && ys_liquidclock_isNowPlaying()) {
         return 1.0;
     }
-    return [self axs_liquidclock_scale];
+    return [self ys_liquidclock_scale];
 }
 
 // 面板用 0~10 的滑条，消费端换算为 0~1 的字重系数。
-- (double)axs_liquidclock_weightRatio {
-    return [self axs_liquidclock_doubleForKey:@"clockWeight" fallback:5.0 minimum:0.0 maximum:10.0] / 10.0;
+- (double)ys_liquidclock_weightRatio {
+    return [self ys_liquidclock_doubleForKey:@"clockWeight" fallback:5.0 minimum:0.0 maximum:10.0] / 10.0;
 }
 
-- (BOOL)axs_liquidclock_isRounded {
-    id value = [self axs_liquidclock_valueForKey:@"roundedFont" defaultValue:@(YES)];
+- (BOOL)ys_liquidclock_isRounded {
+    id value = [self ys_liquidclock_valueForKey:@"roundedFont" defaultValue:@(YES)];
     return [value isKindOfClass:[NSNumber class]] ? [value boolValue] : YES;
 }
 
-- (BOOL)axs_liquidclock_usesLiquidFont {
-    id value = [self axs_liquidclock_valueForKey:@"liquidFont" defaultValue:@(YES)];
+- (BOOL)ys_liquidclock_usesLiquidFont {
+    id value = [self ys_liquidclock_valueForKey:@"liquidFont" defaultValue:@(YES)];
     return [value isKindOfClass:[NSNumber class]] ? [value boolValue] : YES;
 }
 
-- (double)axs_liquidclock_fontWidth {
-    return [self axs_liquidclock_doubleForKey:@"fontWidth" fallback:88.0 minimum:60.0 maximum:100.0];
+- (double)ys_liquidclock_fontWidth {
+    return [self ys_liquidclock_doubleForKey:@"fontWidth" fallback:88.0 minimum:60.0 maximum:100.0];
 }
 
-- (double)axs_liquidclock_fontHeight {
-    return [self axs_liquidclock_doubleForKey:@"fontHeight" fallback:220.0 minimum:100.0 maximum:500.0];
+- (double)ys_liquidclock_fontHeight {
+    return [self ys_liquidclock_doubleForKey:@"fontHeight" fallback:220.0 minimum:100.0 maximum:500.0];
 }
 
-- (double)axs_liquidclock_fontWeight {
-    return [self axs_liquidclock_doubleForKey:@"fontWeight" fallback:500.0 minimum:100.0 maximum:900.0];
+- (double)ys_liquidclock_fontWeight {
+    return [self ys_liquidclock_doubleForKey:@"fontWeight" fallback:500.0 minimum:100.0 maximum:900.0];
 }
 
-- (double)axs_liquidclock_fontSoftness {
-    return [self axs_liquidclock_doubleForKey:@"fontSoftness" fallback:70.0 minimum:0.0 maximum:100.0];
+- (double)ys_liquidclock_fontSoftness {
+    return [self ys_liquidclock_doubleForKey:@"fontSoftness" fallback:70.0 minimum:0.0 maximum:100.0];
 }
 
-- (double)axs_liquidclock_opacity {
-    return [self axs_liquidclock_doubleForKey:@"clockOpacity" fallback:0.8 minimum:0.3 maximum:1.0];
+- (double)ys_liquidclock_opacity {
+    return [self ys_liquidclock_doubleForKey:@"clockOpacity" fallback:0.8 minimum:0.3 maximum:1.0];
 }
 
-- (double)axs_liquidclock_glow {
-    return [self axs_liquidclock_doubleForKey:@"glowStrength" fallback:0.25 minimum:0.0 maximum:1.0];
+- (double)ys_liquidclock_glow {
+    return [self ys_liquidclock_doubleForKey:@"glowStrength" fallback:0.25 minimum:0.0 maximum:1.0];
 }
 
-- (double)axs_liquidclock_tracking {
-    return [self axs_liquidclock_doubleForKey:@"letterSpacing" fallback:-0.3 minimum:-2.0 maximum:2.0];
+- (double)ys_liquidclock_tracking {
+    return [self ys_liquidclock_doubleForKey:@"letterSpacing" fallback:-0.3 minimum:-2.0 maximum:2.0];
 }
 
-- (UIFont *)axs_liquidclock_fontForBaseFont:(UIFont *)baseFont {
+- (UIFont *)ys_liquidclock_fontForBaseFont:(UIFont *)baseFont {
     UIFont *base = [baseFont isKindOfClass:[UIFont class]]
         ? baseFont
         : [UIFont systemFontOfSize:72.0 weight:UIFontWeightSemibold];
-    CGFloat size = MAX(10.0, round(base.pointSize * [self axs_liquidclock_effectiveScale]));
+    CGFloat size = MAX(10.0, round(base.pointSize * [self ys_liquidclock_effectiveScale]));
     CGFloat weight = UIFontWeightRegular +
-        [self axs_liquidclock_weightRatio] * (UIFontWeightBlack - UIFontWeightRegular);
+        [self ys_liquidclock_weightRatio] * (UIFontWeightBlack - UIFontWeightRegular);
 
-    if ([self axs_liquidclock_usesLiquidFont]) {
-        NSString *name = axs_liquidclock_externalFontName();
+    if ([self ys_liquidclock_usesLiquidFont]) {
+        NSString *name = ys_liquidclock_externalFontName();
         if (name.length > 0) {
             UIFont *liquid = [UIFont fontWithName:name size:size];
             if (liquid) {
                 // 四个可变轴对应参考插件的 Width / Height / Weight / Softness。
                 NSDictionary *axes = @{
-                    axs_liquidclock_axisTag("wdth"): @([self axs_liquidclock_fontWidth]),
-                    axs_liquidclock_axisTag("HGHT"): @([self axs_liquidclock_fontHeight]),
-                    axs_liquidclock_axisTag("wght"): @([self axs_liquidclock_fontWeight]),
-                    axs_liquidclock_axisTag("SOFT"): @([self axs_liquidclock_fontSoftness]),
+                    ys_liquidclock_axisTag("wdth"): @([self ys_liquidclock_fontWidth]),
+                    ys_liquidclock_axisTag("HGHT"): @([self ys_liquidclock_fontHeight]),
+                    ys_liquidclock_axisTag("wght"): @([self ys_liquidclock_fontWeight]),
+                    ys_liquidclock_axisTag("SOFT"): @([self ys_liquidclock_fontSoftness]),
                 };
-                UIFont *varied = axs_liquidclock_variationFont(liquid, size, axes);
+                UIFont *varied = ys_liquidclock_variationFont(liquid, size, axes);
                 return varied ?: liquid;
             }
         }
     }
 
     UIFontDescriptor *descriptor = nil;
-    if ([self axs_liquidclock_isRounded]) {
+    if ([self ys_liquidclock_isRounded]) {
         UIFont *system = [UIFont systemFontOfSize:size weight:weight];
         descriptor = [system.fontDescriptor fontDescriptorWithDesign:UIFontDescriptorSystemDesignRounded];
     } else {
@@ -239,21 +239,21 @@ static UIFont *axs_liquidclock_variationFont(UIFont *base, CGFloat size, NSDicti
     return font ?: [UIFont systemFontOfSize:size weight:weight];
 }
 
-- (void)axs_liquidclock_applyToLabel:(UILabel *)label {
+- (void)ys_liquidclock_applyToLabel:(UILabel *)label {
     if (![label isKindOfClass:[UILabel class]]) return;
 
-    UIFont *original = objc_getAssociatedObject(label, AxsLiquidClockOriginalFontKey);
-    if (![self axs_liquidclock_isEnabled]) {
+    UIFont *original = objc_getAssociatedObject(label, YsLiquidClockOriginalFontKey);
+    if (![self ys_liquidclock_isEnabled]) {
         if (original) {
-            UIColor *originalColor = objc_getAssociatedObject(label, AxsLiquidClockOriginalColorKey);
+            UIColor *originalColor = objc_getAssociatedObject(label, YsLiquidClockOriginalColorKey);
             if (originalColor) {
                 label.textColor = originalColor;
-                objc_setAssociatedObject(label, AxsLiquidClockOriginalColorKey, nil,
+                objc_setAssociatedObject(label, YsLiquidClockOriginalColorKey, nil,
                                          OBJC_ASSOCIATION_RETAIN_NONATOMIC);
             }
             label.font = original;
-            objc_setAssociatedObject(label, AxsLiquidClockOriginalFontKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-            objc_setAssociatedObject(label, AxsLiquidClockAppliedKey, nil, OBJC_ASSOCIATION_COPY_NONATOMIC);
+            objc_setAssociatedObject(label, YsLiquidClockOriginalFontKey, nil, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            objc_setAssociatedObject(label, YsLiquidClockAppliedKey, nil, OBJC_ASSOCIATION_COPY_NONATOMIC);
             label.layer.shadowOpacity = 0.0f;
             label.layer.shadowRadius = 0.0f;
         }
@@ -262,7 +262,7 @@ static UIFont *axs_liquidclock_variationFont(UIFont *base, CGFloat size, NSDicti
 
     if (!original) {
         // 只在第一次套用时记录原字体，后续重算都以它为基准，避免逐次叠加。
-        objc_setAssociatedObject(label, AxsLiquidClockOriginalFontKey, label.font,
+        objc_setAssociatedObject(label, YsLiquidClockOriginalFontKey, label.font,
                                  OBJC_ASSOCIATION_RETAIN_NONATOMIC);
         original = label.font;
     }
@@ -270,28 +270,28 @@ static UIFont *axs_liquidclock_variationFont(UIFont *base, CGFloat size, NSDicti
     UIFont *base = [original isKindOfClass:[UIFont class]] ? original : label.font;
     NSString *signature = [NSString stringWithFormat:@"%@|%@|%.2f|%.2f|%.2f|%.2f|%ld|%ld|%.2f|%.2f|%.1f|%.1f|%.1f|%.1f",
         base.fontName, label.text ?: @"",
-        base.pointSize, [self axs_liquidclock_effectiveScale], [self axs_liquidclock_weightRatio],
-        [self axs_liquidclock_tracking],
-        (long)([self axs_liquidclock_isRounded] ? 1 : 0),
-        (long)([self axs_liquidclock_usesLiquidFont] ? 1 : 0),
-        [self axs_liquidclock_fontWidth], [self axs_liquidclock_fontHeight],
-        [self axs_liquidclock_fontWeight], [self axs_liquidclock_fontSoftness],
-        [self axs_liquidclock_glow], [self axs_liquidclock_opacity]];
-    if ([objc_getAssociatedObject(label, AxsLiquidClockAppliedKey) isEqual:signature]) return;
-    objc_setAssociatedObject(label, AxsLiquidClockAppliedKey, signature, OBJC_ASSOCIATION_COPY_NONATOMIC);
+        base.pointSize, [self ys_liquidclock_effectiveScale], [self ys_liquidclock_weightRatio],
+        [self ys_liquidclock_tracking],
+        (long)([self ys_liquidclock_isRounded] ? 1 : 0),
+        (long)([self ys_liquidclock_usesLiquidFont] ? 1 : 0),
+        [self ys_liquidclock_fontWidth], [self ys_liquidclock_fontHeight],
+        [self ys_liquidclock_fontWeight], [self ys_liquidclock_fontSoftness],
+        [self ys_liquidclock_glow], [self ys_liquidclock_opacity]];
+    if ([objc_getAssociatedObject(label, YsLiquidClockAppliedKey) isEqual:signature]) return;
+    objc_setAssociatedObject(label, YsLiquidClockAppliedKey, signature, OBJC_ASSOCIATION_COPY_NONATOMIC);
 
-    if (!objc_getAssociatedObject(label, AxsLiquidClockOriginalColorKey)) {
-        objc_setAssociatedObject(label, AxsLiquidClockOriginalColorKey, label.textColor,
+    if (!objc_getAssociatedObject(label, YsLiquidClockOriginalColorKey)) {
+        objc_setAssociatedObject(label, YsLiquidClockOriginalColorKey, label.textColor,
                                  OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     // 液态玻璃观感：半透明冷白，避免死白压过壁纸。
     label.textColor = [UIColor colorWithRed:0.86 green:0.90 blue:1.0
-                                      alpha:[self axs_liquidclock_opacity]];
+                                      alpha:[self ys_liquidclock_opacity]];
 
-    UIFont *font = [self axs_liquidclock_fontForBaseFont:base];
+    UIFont *font = [self ys_liquidclock_fontForBaseFont:base];
     label.font = font;
 
-    double tracking = [self axs_liquidclock_tracking];
+    double tracking = [self ys_liquidclock_tracking];
     if (fabs(tracking) > 0.001 && label.text.length > 0) {
         label.attributedText = [[NSAttributedString alloc] initWithString:label.text
             attributes:@{NSKernAttributeName: @(tracking),
@@ -299,7 +299,7 @@ static UIFont *axs_liquidclock_variationFont(UIFont *base, CGFloat size, NSDicti
                          NSForegroundColorAttributeName: label.textColor}];
     }
 
-    double glow = [self axs_liquidclock_glow];
+    double glow = [self ys_liquidclock_glow];
     CALayer *layer = label.layer;
     if (glow > 0.0) {
         // 白色柔光模拟液态玻璃的边缘折射，不能裁切到 label 边界内。

@@ -2,7 +2,7 @@
 
 把锁屏时钟改成 iOS 26 液态玻璃风格：更大的字号、内置可变数字字体、半透明冷白与轻微柔光。
 
-- 包名：`com.axs.liquidclock`
+- 包名：`com.ys.liquidclock`
 - 注入进程：`com.apple.springboard`
 - 最低系统：iOS 15.0（Rootless / RootHide 打包由 CI 处理）
 - 依赖：`mobilesubstrate`、`preferenceloader`
@@ -34,11 +34,11 @@
 ## 目录
 
 ```
-Hooks/AxsLiquidClockMain.xm              钩子与视图树识别
-Sources/AxsLiquidClockStyle.{h,m}        字体与柔光计算
-Sources/AxsLiquidClockConfig.{h,m}       配置快照
-Sources/AxsLiquidClockPreferences.h      单一读写通道
-AxsLiquidClockPrefs/                     PreferenceLoader 面板
+Hooks/YsLiquidClockMain.xm              钩子与视图树识别
+Sources/YsLiquidClockStyle.{h,m}        字体与柔光计算
+Sources/YsLiquidClockConfig.{h,m}       配置快照
+Sources/YsLiquidClockPreferences.h      单一读写通道
+YsLiquidClockPrefs/                     PreferenceLoader 面板
 .github/workflows/build.yml              构建并发布 deb
 ```
 
@@ -57,4 +57,4 @@ sh build.sh rootless
 
 静态结构检查（`doctor.py`）通过，**真机效果尚未验收**。若安装后锁屏时钟外观无变化，
 请确认系统版本下 `SBFLockScreenDateView` 是否仍为锁屏时钟的承载视图，并据此调整
-`Hooks/AxsLiquidClockMain.xm` 中的注入点。
+`Hooks/YsLiquidClockMain.xm` 中的注入点。

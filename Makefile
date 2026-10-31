@@ -4,16 +4,16 @@ FINALPACKAGE = 1
 ARCHS = arm64 arm64e
 
 # Share the SDK and deployment targets with the PreferenceBundle.
-include AxsLiquidClockBuild.mk
+include YsLiquidClockBuild.mk
 include $(THEOS)/makefiles/common.mk
 
-TWEAK_NAME = AxsLiquidClock
-AxsLiquidClock_FILES = $(wildcard Hooks/*.xm Sources/*.m)
-AxsLiquidClock_CFLAGS = -fobjc-arc -I./Headers -I./Sources
-AxsLiquidClock_FRAMEWORKS = UIKit Foundation CoreFoundation CoreText
-AxsLiquidClock_LIBRARIES = substrate
+TWEAK_NAME = YsLiquidClock
+YsLiquidClock_FILES = $(wildcard Hooks/*.xm Sources/*.m)
+YsLiquidClock_CFLAGS = -fobjc-arc -I./Headers -I./Sources
+YsLiquidClock_FRAMEWORKS = UIKit Foundation CoreFoundation CoreText
+YsLiquidClock_LIBRARIES = substrate
 
 include $(THEOS_MAKE_PATH)/tweak.mk
 
-SUBPROJECTS += AxsLiquidClockPrefs
+SUBPROJECTS += YsLiquidClockPrefs
 include $(THEOS_MAKE_PATH)/aggregate.mk

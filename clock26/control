@@ -1,0 +1,13 @@
+Package: com.ys.liquidclock26
+Name: iOS26 液态时钟（独立版）
+Version: 1.0.0
+Architecture: iphoneos-arm
+Description: 只保留锁屏液态时钟：SpringBoard 时钟渲染 + backboardd Metal 液态合成 + 可变数字字体。
+  设置面板只开放时钟相关项（帧率、边框、模糊、可变字体字重/字号/柔和度），
+  灵动岛、通知、键盘、控制中心等与时钟无关的功能全部关闭且不再提供入口。
+Maintainer: 鱼教兽
+Author: 鱼教兽
+Section: Ys-Tweaks
+Depends: mobilesubstrate, preferenceloader, firmware (>= 15.0)
+Replaces: com.zegeyoudaoli.liquidass27, dylv.liquidass, dylv.zege.liquidass, dylv.blurless
+Conflicts: com.zegeyoudaoli.liquidass27, dylv.liquidass, dylv.zege.liquidass, dylv.blurless

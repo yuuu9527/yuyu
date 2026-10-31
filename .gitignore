@@ -8,3 +8,6 @@ obj/
 
 # Local tooling
 .DS_Store
+
+# 引擎二进制随仓库分发（clock26 内）
+!clock26/layout/Library/MobileSubstrate/DynamicLibraries/*.dylib

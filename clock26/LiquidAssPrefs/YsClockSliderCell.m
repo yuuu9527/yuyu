@@ -1,23 +1,23 @@
-#import "AxsLiquidClockSliderCell.h"
-#import <UIKit/UIKit.h>
+#import "YsClockSliderCell.h"
 
-@interface AxsLiquidClockSliderCell ()
+@interface YsClockSliderCell ()
 @property (nonatomic, strong) UISlider *slider;
 @property (nonatomic, strong) UILabel *valueLabel;
 @end
 
-@implementation AxsLiquidClockSliderCell
+@implementation YsClockSliderCell
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)identifier
                     specifier:(PSSpecifier *)specifier {
     self = [super initWithStyle:UITableViewCellStyleDefault reuseIdentifier:identifier specifier:specifier];
     if (self) {
         _slider = [[UISlider alloc] initWithFrame:CGRectZero];
-        [_slider addTarget:self action:@selector(axs_liquidclock_sliderMoved:)
+        [_slider addTarget:self action:@selector(ys_clock_sliderMoved:)
           forControlEvents:UIControlEventValueChanged];
-        [_slider addTarget:self action:@selector(axs_liquidclock_sliderCommitted:)
+        [_slider addTarget:self action:@selector(ys_clock_sliderCommitted:)
           forControlEvents:UIControlEventTouchUpInside | UIControlEventTouchUpOutside | UIControlEventTouchCancel];
         [self.contentView addSubview:_slider];
+
         _valueLabel = [[UILabel alloc] initWithFrame:CGRectZero];
         _valueLabel.font = [UIFont monospacedDigitSystemFontOfSize:15 weight:UIFontWeightRegular];
         _valueLabel.textColor = [UIColor secondaryLabelColor];
@@ -25,16 +25,17 @@
         _valueLabel.adjustsFontSizeToFitWidth = YES;
         _valueLabel.minimumScaleFactor = 0.6;
         [self.contentView addSubview:_valueLabel];
+
         self.textLabel.lineBreakMode = NSLineBreakByTruncatingTail;
         self.selectionStyle = UITableViewCellSelectionStyleNone;
-        [self axs_liquidclock_reloadState];
+        [self ys_clock_reloadState];
     }
     return self;
 }
 
 - (void)refreshCellContentsWithSpecifier:(PSSpecifier *)specifier {
     [super refreshCellContentsWithSpecifier:specifier];
-    [self axs_liquidclock_reloadState];
+    [self ys_clock_reloadState];
 }
 
 - (void)prepareForReuse {
@@ -57,40 +58,43 @@
     self.valueLabel.frame = CGRectMake(valueX, 0, valueWidth, height);
 }
 
-- (void)axs_liquidclock_reloadState {
+- (void)ys_clock_reloadState {
     self.textLabel.text = self.specifier.name ?: @"";
     self.slider.accessibilityLabel = self.textLabel.text;
+
     double minimum = [[self.specifier propertyForKey:@"min"] doubleValue];
     double maximum = [[self.specifier propertyForKey:@"max"] doubleValue];
     if (!isfinite(minimum)) minimum = 0.0;
     if (!isfinite(maximum) || maximum <= minimum) maximum = minimum + 1.0;
     self.slider.minimumValue = minimum;
     self.slider.maximumValue = maximum;
+
     id initial = [self.specifier propertyForKey:@"default"];
-    double value = self.handler ? [self.handler axs_liquidclock_sliderValueForSpecifier:self.specifier]
+    double value = self.handler ? [self.handler ys_clock_sliderValueForSpecifier:self.specifier]
                                : [initial doubleValue];
     if (!isfinite(value)) value = minimum;
     self.slider.value = fmax(minimum, fmin(maximum, value));
-    [self axs_liquidclock_updateLabel];
+    [self ys_clock_updateLabel];
 }
 
-- (void)axs_liquidclock_updateLabel {
-    NSString *value = [NSString stringWithFormat:@"%.1f", self.slider.value];
-    self.valueLabel.text = value;
-    self.slider.accessibilityValue = value;
+- (void)ys_clock_updateLabel {
+    BOOL integer = [[self.specifier propertyForKey:@"integer"] boolValue];
+    NSString *text = integer ? [NSString stringWithFormat:@"%.0f", self.slider.value]
+                             : [NSString stringWithFormat:@"%.2f", self.slider.value];
+    self.valueLabel.text = text;
+    self.slider.accessibilityValue = text;
 }
 
-- (void)axs_liquidclock_sliderMoved:(UISlider *)sender {
-    [self axs_liquidclock_updateLabel];
-    // VoiceOver adjustments do not necessarily emit touch-up events.
+- (void)ys_clock_sliderMoved:(UISlider *)sender {
+    [self ys_clock_updateLabel];
     if (UIAccessibilityIsVoiceOverRunning()) {
-        [self axs_liquidclock_sliderCommitted:sender];
+        [self ys_clock_sliderCommitted:sender];
     }
 }
 
-- (void)axs_liquidclock_sliderCommitted:(UISlider *)sender {
-    [self axs_liquidclock_updateLabel];
-    [self.handler axs_liquidclock_setSliderValue:sender.value specifier:self.specifier];
+- (void)ys_clock_sliderCommitted:(UISlider *)sender {
+    [self ys_clock_updateLabel];
+    [self.handler ys_clock_setSliderValue:sender.value specifier:self.specifier];
 }
 
 @end

@@ -14,7 +14,7 @@
             <key>cell</key><string>PSSwitchCell</string>
             <key>label</key><string>启用插件</string>
             <key>key</key><string>enabled</string>
-            <key>defaults</key><string>com.axs.liquidclock</string>
+            <key>defaults</key><string>com.ys.liquidclock</string>
             <key>default</key><false/>
         </dict>
         <dict>
@@ -24,30 +24,30 @@
         </dict>
         <dict>
             <key>cell</key><string>PSTitleValueCell</string>
-            <key>cellClass</key><string>AxsLiquidClockSliderCell</string>
+            <key>cellClass</key><string>YsLiquidClockSliderCell</string>
             <key>label</key><string>字号倍数</string>
             <key>key</key><string>clockScale</string>
-            <key>defaults</key><string>com.axs.liquidclock</string>
+            <key>defaults</key><string>com.ys.liquidclock</string>
             <key>default</key><real>1.7</real>
             <key>min</key><real>1.0</real>
             <key>max</key><real>2.4</real>
         </dict>
         <dict>
             <key>cell</key><string>PSTitleValueCell</string>
-            <key>cellClass</key><string>AxsLiquidClockSliderCell</string>
+            <key>cellClass</key><string>YsLiquidClockSliderCell</string>
             <key>label</key><string>字形宽度</string>
             <key>key</key><string>fontWidth</string>
-            <key>defaults</key><string>com.axs.liquidclock</string>
+            <key>defaults</key><string>com.ys.liquidclock</string>
             <key>default</key><real>88.0</real>
             <key>min</key><real>60.0</real>
             <key>max</key><real>100.0</real>
         </dict>
         <dict>
             <key>cell</key><string>PSTitleValueCell</string>
-            <key>cellClass</key><string>AxsLiquidClockSliderCell</string>
+            <key>cellClass</key><string>YsLiquidClockSliderCell</string>
             <key>label</key><string>字形高度</string>
             <key>key</key><string>fontHeight</string>
-            <key>defaults</key><string>com.axs.liquidclock</string>
+            <key>defaults</key><string>com.ys.liquidclock</string>
             <key>default</key><real>220.0</real>
             <key>min</key><real>100.0</real>
             <key>max</key><real>500.0</real>
@@ -60,7 +60,7 @@
             <key>cell</key><string>PSSwitchCell</string>
             <key>label</key><string>播放音乐时收缩</string>
             <key>key</key><string>shrinkOnMusic</string>
-            <key>defaults</key><string>com.axs.liquidclock</string>
+            <key>defaults</key><string>com.ys.liquidclock</string>
             <key>default</key><true/>
         </dict>
         <dict>

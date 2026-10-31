@@ -1,17 +1,17 @@
-#import "AxsLiquidClockRootListController.h"
-#import "AxsLiquidClockPreferences.h"
+#import "YsLiquidClockRootListController.h"
+#import "YsLiquidClockPreferences.h"
 #import <Preferences/PSSpecifier.h>
 #import <UIKit/UIKit.h>
-#import "AxsLiquidClockSliderCell.h"
+#import "YsLiquidClockSliderCell.h"
 
-@interface AxsLiquidClockRootListController () <AxsLiquidClockSliderCellHandler>
+@interface YsLiquidClockRootListController () <YsLiquidClockSliderCellHandler>
 @end
 
-@implementation AxsLiquidClockRootListController
+@implementation YsLiquidClockRootListController
 
 - (NSMutableArray *)specifiers {
     if (!_specifiers) {
-        NSMutableArray *items = [[self loadSpecifiersFromPlistName:@"AxsLiquidClockRoot"
+        NSMutableArray *items = [[self loadSpecifiersFromPlistName:@"YsLiquidClockRoot"
                                                            target:self] mutableCopy];
         _specifiers = items;
     }
@@ -21,14 +21,14 @@
 - (id)readPreferenceValue:(PSSpecifier *)specifier {
     NSString *key = [specifier propertyForKey:@"key"];
     if (key.length == 0) return nil;
-    return axs_liquidclock_readPreferences()[key] ?: [specifier propertyForKey:@"default"];
+    return ys_liquidclock_readPreferences()[key] ?: [specifier propertyForKey:@"default"];
 }
 
 - (void)setPreferenceValue:(id)value specifier:(PSSpecifier *)specifier {
     NSString *key = [specifier propertyForKey:@"key"];
     if (key.length == 0) return;
     NSError *error = nil;
-    if (!axs_liquidclock_writePreference(key, value, &error)) {
+    if (!ys_liquidclock_writePreference(key, value, &error)) {
         UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"设置未保存"
             message:error.localizedDescription ?: @"请检查配置文件路径和写入权限。"
             preferredStyle:UIAlertControllerStyleAlert];
@@ -43,19 +43,19 @@
     if ([PSListController instancesRespondToSelector:_cmd]) {
         [super tableView:tableView willDisplayCell:cell forRowAtIndexPath:indexPath];
     }
-    if ([cell isKindOfClass:[AxsLiquidClockSliderCell class]]) {
-        AxsLiquidClockSliderCell *sliderCell = (AxsLiquidClockSliderCell *)cell;
+    if ([cell isKindOfClass:[YsLiquidClockSliderCell class]]) {
+        YsLiquidClockSliderCell *sliderCell = (YsLiquidClockSliderCell *)cell;
         sliderCell.handler = self;
-        [sliderCell axs_liquidclock_reloadState];
+        [sliderCell ys_liquidclock_reloadState];
     }
 }
 
-- (double)axs_liquidclock_sliderValueForSpecifier:(PSSpecifier *)specifier {
+- (double)ys_liquidclock_sliderValueForSpecifier:(PSSpecifier *)specifier {
     id value = [self readPreferenceValue:specifier];
     return [value isKindOfClass:[NSNumber class]] ? [value doubleValue] : 0.0;
 }
 
-- (void)axs_liquidclock_setSliderValue:(double)value specifier:(PSSpecifier *)specifier {
+- (void)ys_liquidclock_setSliderValue:(double)value specifier:(PSSpecifier *)specifier {
     double minimum = [[specifier propertyForKey:@"min"] doubleValue];
     double maximum = [[specifier propertyForKey:@"max"] doubleValue];
     if (!isfinite(minimum)) minimum = 0.0;
