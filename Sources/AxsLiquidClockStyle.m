@@ -89,14 +89,8 @@ static BOOL axs_liquidclock_isNowPlaying(void) {
 static UIFont *axs_liquidclock_variationFont(UIFont *base, CGFloat size, NSDictionary *axes) {
     CTFontRef font = (__bridge CTFontRef)base;
     if (!font) return nil;
-    CTFontDescriptorRef descriptor = CTFontCopyFontDescriptor(font);
-    if (!descriptor) return nil;
-    CTFontDescriptorRef varied = CTFontDescriptorCreateCopyWithVariation(
-        descriptor, (__bridge CFDictionaryRef)axes, 1.0);
-    CFRelease(descriptor);
-    if (!varied) return nil;
-    CTFontRef result = CTFontCreateWithFontDescriptor(varied, size, NULL);
-    CFRelease(varied);
+    CTFontRef result = CTFontCreateCopyWithVariation(font, size,
+        (__bridge CFDictionaryRef)axes);
     if (!result) return nil;
     return (__bridge_transfer UIFont *)result;
 }
