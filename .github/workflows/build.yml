@@ -6,6 +6,17 @@ on:
     branches:
       - main
       - master
+    paths:
+      - 'Sources/**'
+      - 'Hooks/**'
+      - 'Headers/**'
+      - 'YsLiquidClockPrefs/**'
+      - 'layout/**'
+      - 'Makefile'
+      - 'YsLiquidClockBuild.mk'
+      - 'YsLiquidClock.plist'
+      - 'control'
+      - '.github/workflows/build.yml'
 
 permissions:
   contents: write
