@@ -40,8 +40,12 @@ static void axs_liquidclock_styleTree(UIView *view, NSUInteger depth, NSUInteger
 
 // 设置变更后立即刷新已存在的时钟，不必注销 SpringBoard。
 static void axs_liquidclock_refreshWindows(void) {
-    for (UIWindow *window in [UIApplication sharedApplication].windows) {
-        axs_liquidclock_styleTree(window, 0, 16);
+    // UIApplication.windows 自 iOS 15 起废弃，改为遍历已连接窗口场景。
+    for (UIScene *scene in [UIApplication sharedApplication].connectedScenes) {
+        if (![scene isKindOfClass:[UIWindowScene class]]) continue;
+        for (UIWindow *window in ((UIWindowScene *)scene).windows) {
+            axs_liquidclock_styleTree(window, 0, 16);
+        }
     }
 }
 
