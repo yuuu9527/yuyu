@@ -11,20 +11,44 @@ extern char **environ;
 static NSString * const kYsClockDomain = @"dylv.liquidassprefs";
 static NSString * const kYsClockReload = @"dylv.liquidassprefs/Reload";
 
+static NSString *YsClockPrefsPath(void) {
+    // 引擎按这个真实路径读取（roothide 下同样落在 /var/mobile），不随 jbroot 变化。
+    return @"/var/mobile/Library/Preferences/dylv.liquidassprefs.plist";
+}
+
+static NSMutableDictionary *YsClockCurrentValues(void) {
+    NSDictionary *values = [NSDictionary dictionaryWithContentsOfFile:YsClockPrefsPath()];
+    if ([values isKindOfClass:[NSDictionary class]]) return [values mutableCopy];
+    // 文件还不存在时退回 cfprefsd 的快照，避免第一次写入丢键。
+    NSUserDefaults *defaults = [[NSUserDefaults alloc] initWithSuiteName:kYsClockDomain];
+    [defaults synchronize];
+    NSDictionary *persisted = [defaults persistentDomainForName:kYsClockDomain];
+    return [persisted isKindOfClass:[NSDictionary class]] ? [persisted mutableCopy]
+                                                          : [NSMutableDictionary dictionary];
+}
+
 static id YsClockReadValue(NSString *key) {
     if (key.length == 0) return nil;
-    CFPropertyListRef value = CFPreferencesCopyAppValue((__bridge CFStringRef)key,
-                                                        (__bridge CFStringRef)kYsClockDomain);
-    return (__bridge_transfer id)value;
+    return YsClockCurrentValues()[key];
 }
 
 static void YsClockWriteValue(NSString *key, id value) {
     if (key.length == 0) return;
-    CFStringRef domain = (__bridge CFStringRef)kYsClockDomain;
-    CFPreferencesSetAppValue((__bridge CFStringRef)key,
-                             value ? (__bridge CFPropertyListRef)value : NULL,
-                             domain);
-    CFPreferencesAppSynchronize(domain);
+    NSMutableDictionary *values = YsClockCurrentValues();
+    if (value) values[key] = value;
+    else [values removeObjectForKey:key];
+
+    NSData *data = [NSPropertyListSerialization dataWithPropertyList:values
+                                                              format:NSPropertyListBinaryFormat_v1_0
+                                                             options:0
+                                                               error:NULL];
+    if (data) [data writeToFile:YsClockPrefsPath() options:NSDataWritingAtomic error:NULL];
+
+    // 把整份快照镜像给 cfprefsd，防止它之后用旧值覆盖刚写进去的文件。
+    NSUserDefaults *defaults = [[NSUserDefaults alloc] initWithSuiteName:kYsClockDomain];
+    [defaults setPersistentDomain:values forName:kYsClockDomain];
+    [defaults synchronize];
+
     // 引擎监听这个通知做热刷新，注销后再读一次以覆盖冷启动路径。
     CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(),
                                          (__bridge CFStringRef)kYsClockReload,
@@ -94,8 +118,7 @@ static BOOL YsClockSpawnKillall(NSString *path) {
 #pragma mark - actions
 
 - (void)applyAndRespring {
-    CFStringRef domain = (__bridge CFStringRef)kYsClockDomain;
-    CFPreferencesAppSynchronize(domain);
+    [[[NSUserDefaults alloc] initWithSuiteName:kYsClockDomain] synchronize];
     CFNotificationCenterPostNotification(CFNotificationCenterGetDarwinNotifyCenter(),
                                          (__bridge CFStringRef)kYsClockReload,
                                          NULL, NULL, true);
