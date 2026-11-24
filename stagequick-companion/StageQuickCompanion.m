@@ -20,7 +20,8 @@ static BOOL YUSQCOpenCombination(NSString *bundleID) {
     NSURL *url = [NSURL URLWithString:[NSString stringWithFormat:@"App-prefs://panoramic/pair?app=%@", escaped]];
     UIApplication *application = [UIApplication sharedApplication];
     if (!url || ![application canOpenURL:url]) return NO;
-    return [application openURL:url];
+    SEL open = NSSelectorFromString(@"openURL:");
+    return [application respondsToSelector:open] && ((BOOL (*)(id, SEL, NSURL *))objc_msgSend)(application, open, url);
 }
 @interface YUSQCPoint : UILongPressGestureRecognizer
 @property(nonatomic, weak) UIView *yuStageQuickCoordinateView;
