@@ -48,13 +48,12 @@ static void sqLaunch(NSString *bid);
 - (void)tableView:(UITableView*)t didSelectRowAtIndexPath:(NSIndexPath*)p { [t deselectRowAtIndexPath:p animated:YES]; if(!sqUnlocked()){YUStageQuickDismiss();return;} NSString *bid=[self yuStageQuickRows:p.section][p.row][@"id"]; sqLaunch(bid); [sqRecent removeObject:bid];[sqRecent insertObject:bid atIndex:0];if(sqRecent.count>6)[sqRecent removeLastObject]; YUStageQuickDismiss(); }
 @end
 void YUStageQuickDismiss(void) { if(!NSThread.isMainThread){dispatch_async(dispatch_get_main_queue(),^{YUStageQuickDismiss();}); return;} [sqWindow endEditing:YES];sqWindow.hidden=YES; sqWindow.rootViewController=nil;sqWindow=nil; }
-void YUStageQuickShow(void) { if(!NSThread.isMainThread){dispatch_async(dispatch_get_main_queue(),^{YUStageQuickShow();});return;} if(sqWindow || !sqUnlocked())return; UIWindowScene *chosen=nil;for(UIScene *s in UIApplication.sharedApplication.connectedScenes) if([s isKindOfClass:UIWindowScene.class] && ((UIWindowScene*)s).screen==UIScreen.mainScreen && s.activationState!=UISceneActivationStateUnattached){chosen=(UIWindowScene*)s;if(s.activationState==UISceneActivationStateForegroundActive)break;}if(!chosen)return;
+void YUStageQuickShow(void) { if(!NSThread.isMainThread){dispatch_async(dispatch_get_main_queue(),^{YUStageQuickShow();});return;} if(!sqEnabled() || sqWindow || !sqUnlocked())return; UIWindowScene *chosen=nil;for(UIScene *s in UIApplication.sharedApplication.connectedScenes) if([s isKindOfClass:UIWindowScene.class] && ((UIWindowScene*)s).screen==UIScreen.mainScreen && s.activationState!=UISceneActivationStateUnattached){chosen=(UIWindowScene*)s;if(s.activationState==UISceneActivationStateForegroundActive)break;}if(!chosen)return;
  if(!sqRecent)sqRecent=[NSMutableArray new]; YUStageQuickController *vc=[YUStageQuickController new]; sqController=vc; sqWindow=[[UIWindow alloc]initWithWindowScene:chosen];sqWindow.frame=chosen.coordinateSpace.bounds; sqWindow.windowLevel=UIWindowLevelAlert+2;sqWindow.backgroundColor=UIColor.clearColor;sqWindow.rootViewController=vc; [sqWindow makeKeyAndVisible]; vc.card.alpha=.2;vc.card.transform=CGAffineTransformMakeTranslation(0,MIN(330,sqWindow.bounds.size.height*.45));[UIView animateWithDuration:.32 delay:0 usingSpringWithDamping:.82 initialSpringVelocity:.2 options:UIViewAnimationOptionBeginFromCurrentState animations:^{vc.card.alpha=1;vc.card.transform=CGAffineTransformIdentity;} completion:nil]; dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED,0),^{ NSArray *apps=sqApps(); dispatch_async(dispatch_get_main_queue(),^{if(sqWindow.rootViewController!=vc)return;vc.apps=apps;[vc yuStageQuickFilter];});}); }
 
 static CGFloat sqProgress = 0;
-static BOOL sqPendingOpen = NO;
 static NSDictionary *sqPrefs(void) { return SQNormalizedPreferences(); }
-static BOOL sqEnabled(void) { return [sqPrefs()[@"enabled"] boolValue] || ![[NSUserDefaults standardUserDefaults] objectForKey:@"com.yu.stagequick.disabled"]; }
+static BOOL sqEnabled(void) { return [sqPrefs()[@"enabled"] boolValue]; }
 static void sqLaunch(NSString *bid) {
     NSString *mode=sqPrefs()[@"openMode"];
     if ([mode isEqual:@"Combination"]) {
