@@ -48,6 +48,9 @@ jobs:
           otool -arch arm64e -L "$bin" | tee "$RUNNER_TEMP/libraries"
           grep -F '@loader_path/.jbroot/usr/lib/libsubstrate.dylib' "$RUNNER_TEMP/libraries"
           test "$(find "$RUNNER_TEMP/root" -name '*.dylib' | wc -l)" -eq 1
+          test -s "$RUNNER_TEMP/root/Library/PreferenceBundles/StageQuickPrefs.bundle/Info.plist"
+          test -s "$RUNNER_TEMP/root/Library/PreferenceBundles/StageQuickPrefs.bundle/SQRoot.plist"
+          test -s "$RUNNER_TEMP/root/Library/PreferenceLoader/Preferences/StageQuickPrefs.plist"
           shasum -a 256 "$deb"
       - uses: actions/upload-artifact@v4
         with:

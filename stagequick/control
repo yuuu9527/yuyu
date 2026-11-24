@@ -1,10 +1,10 @@
 Package: com.yu.stagequick
 Name: StageQuick 快捷启动
-Version: 1.0.0
+Version: 1.1.0
 Architecture: iphoneos-arm64e
 Description: Bottom-right gesture and searchable fullscreen app launcher for RootHide.
 Maintainer: Yu
 Author: Yu
 Section: Tweaks
-Depends: firmware (>= 15.0), mobilesubstrate, roothide
+Depends: firmware (>= 15.0), mobilesubstrate, roothide, preferenceloader
 Conflicts: me.tomt000.stageduo

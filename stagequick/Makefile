@@ -10,3 +10,9 @@ StageQuick_CFLAGS := -fobjc-arc
 StageQuick_FRAMEWORKS := UIKit Foundation QuartzCore CoreGraphics CoreFoundation
 StageQuick_LIBRARIES := substrate
 include $(THEOS_MAKE_PATH)/tweak.mk
+SUBPROJECTS += StageQuickPrefs
+include $(THEOS_MAKE_PATH)/aggregate.mk
+
+after-stage::
+	@mkdir -p "$(THEOS_STAGING_DIR)/Library/PreferenceLoader/Preferences"
+	@cp "$(THEOS_PROJECT_DIR)/Resources/StageQuickPrefs.plist" "$(THEOS_STAGING_DIR)/Library/PreferenceLoader/Preferences/StageQuickPrefs.plist"

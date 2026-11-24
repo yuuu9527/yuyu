@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>title</key><string>StageQuick</string>
+    <key>items</key>
+    <array>
+        <dict><key>cell</key><string>PSGroupCell</string><key>label</key><string>独立版设置</string></dict>
+        <dict><key>cell</key><string>PSSwitchCell</string><key>label</key><string>启用 StageQuick</string><key>key</key><string>enabled</string><key>default</key><true/></dict>
+        <dict><key>cell</key><string>PSLinkListCell</string><key>label</key><string>打开模式</string><key>key</key><string>openMode</string><key>default</key><string>Original</string><key>values</key><array><string>Original</string><string>Fullscreen</string><string>Combination</string></array><key>titles</key><array><string>Original</string><string>Fullscreen</string><string>Combination</string></array></dict>
+        <dict><key>cell</key><string>PSMultiValueCell</string><key>label</key><string>外观</string><key>key</key><string>appearance</string><key>default</key><string>System</string><key>values</key><array><string>System</string><string>Light</string><string>Dark</string></array><key>titles</key><array><string>跟随系统</string><string>浅色</string><string>深色</string></array></dict>
+        <dict><key>cell</key><string>PSGroupCell</string><key>label</key><string>固定应用</string><key>footerText</key><string>可直接编辑 pinnedApplications；保存为 bundle identifier 数组。</string></dict>
+        <dict><key>cell</key><string>PSEditTextCell</string><key>label</key><string>固定应用 Bundle ID</string><key>key</key><string>pinnedApplications</string><key>default</key><array></array><key>placeholder</key><string>使用逗号分隔，例如 com.apple.Preferences</string></dict>
+        <dict><key>cell</key><string>PSGroupCell</string><key>footerText</key><string>by Yu</string></dict>
+    </array>
+</dict>
+</plist>
