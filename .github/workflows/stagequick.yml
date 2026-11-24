@@ -9,7 +9,7 @@ permissions:
 jobs:
   build:
     if: toJSON(github.event.repository.private) == 'false'
-    runs-on: ubuntu-22.04
+    runs-on: macos-15-intel
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
@@ -19,19 +19,20 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          sudo apt-get -qq update
-          sudo apt-get -yq install fakeroot rsync libxml2 libtinfo5 libtinfo6 libio-compress-perl
+          export HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALLED_DEPENDENTS_CHECK=1
+          brew install dpkg ldid make xz
+          sudo xcode-select -s /Applications/Xcode_16.4.app/Contents/Developer
+          xcodebuild -version
           export THEOS="$RUNNER_TEMP/theos"
           git clone --quiet https://github.com/roothide/theos.git "$THEOS"
           git -C "$THEOS" checkout -q 958fea4f779943505b15b93c88bb4db8d97b346d
           git -C "$THEOS" submodule update --init --recursive --depth 1 --jobs 4
-          mkdir -p "$THEOS/toolchain" "$THEOS/sdks"
-          curl -fsSL --retry 3 https://github.com/L1ghtmann/llvm-project/releases/download/test-210562a/iOSToolchain-x86_64.tar.xz | tar -xJ -C "$THEOS/toolchain"
+          mkdir -p "$THEOS/sdks"
           curl -fsSL --retry 3 https://github.com/theos/sdks/releases/download/master-146e41f/iPhoneOS16.5.sdk.tar.xz -o "$RUNNER_TEMP/sdk.tar.xz"
-          echo "5e0fd3f01266cce4ce012d4a99b38eb56578fca40d09edc81cd83dee958202fb  $RUNNER_TEMP/sdk.tar.xz" | sha256sum -c -
+          echo "5e0fd3f01266cce4ce012d4a99b38eb56578fca40d09edc81cd83dee958202fb  $RUNNER_TEMP/sdk.tar.xz" | shasum -a 256 -c -
           tar -xJf "$RUNNER_TEMP/sdk.tar.xz" -C "$THEOS/sdks"
           echo "THEOS=$THEOS" >> "$GITHUB_ENV"
-          echo "$THEOS/toolchain/linux/iphone/bin" >> "$GITHUB_PATH"
+          echo "$(brew --prefix make)/libexec/gnubin" >> "$GITHUB_PATH"
       - name: Build and inspect deb
         working-directory: stagequick
         shell: bash
@@ -47,7 +48,7 @@ jobs:
           otool -arch arm64e -L "$bin" | tee "$RUNNER_TEMP/libraries"
           grep -F '@loader_path/.jbroot/usr/lib/libsubstrate.dylib' "$RUNNER_TEMP/libraries"
           test "$(find "$RUNNER_TEMP/root" -name '*.dylib' | wc -l)" -eq 1
-          sha256sum "$deb"
+          shasum -a 256 "$deb"
       - uses: actions/upload-artifact@v4
         with:
           name: StageQuick-RootHide
