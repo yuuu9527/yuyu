@@ -1,0 +1,48 @@
+name: Build Dynamic Stage Trigger Panel
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    # Never allocate a runner if the repository is made private.
+    if: toJSON(github.event.repository.private) == 'false'
+    runs-on: macos-latest
+    timeout-minutes: 45
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: '1'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install Theos and iPhoneOS 16.5 SDK
+        shell: bash
+        run: |
+          set -euo pipefail
+          brew install ldid dpkg xz
+          export THEOS="$RUNNER_TEMP/theos"
+          git clone --depth 1 --recursive --shallow-submodules https://github.com/theos/theos.git "$THEOS"
+          git clone --depth 1 --filter=blob:none --sparse https://github.com/theos/sdks.git "$RUNNER_TEMP/ios-sdks"
+          git -C "$RUNNER_TEMP/ios-sdks" sparse-checkout set iPhoneOS16.5.sdk
+          mkdir -p "$THEOS/sdks"
+          cp -R "$RUNNER_TEMP/ios-sdks/iPhoneOS16.5.sdk" "$THEOS/sdks/"
+          test -d "$THEOS/sdks/iPhoneOS16.5.sdk/System/Library/Frameworks"
+          echo "THEOS=$THEOS" >> "$GITHUB_ENV"
+
+      - name: Build rootless deb
+        run: sh build.sh rootless
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DynamicStage-rootless
+          path: packages/*.deb
+          if-no-files-found: error
+          retention-days: 1

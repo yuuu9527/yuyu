@@ -11,3 +11,39 @@ obj/
 
 # 引擎二进制随仓库分发（clock26 内）
 !clock26/layout/Library/MobileSubstrate/DynamicLibraries/*.dylib
+
+# DynamicStage
+# Theos
+.theos/
+packages/
+obj/
+_/
+*~
+.DS_Store
+
+# Xcode
+*.xcodeproj/
+*.xcworkspace/
+build/
+*.ipa
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Git
+.git/

@@ -1,0 +1,10 @@
+Package: com.yu.dynamicstagepan
+Name: Dynamic Stage 触发面板
+Version: 1.0.0
+Architecture: iphoneos-arm
+Description: Dynamic Stage 触发面板 - 通过边缘拖拽或长按手势快速打开最近使用的应用和收藏应用。支持手势自定义、应用筛选和多种交互模式。
+Maintainer: 鱼教兽
+Author: tomt000, 鱼教兽
+Section: Yu-Tweaks
+Depends: mobilesubstrate
+Conflicts: me.tomt000.stageduo

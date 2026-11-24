@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "name": "Dynamicstagepan",
+  "id": "dynamicstagepan",
+  "display_name": "Dynamic Stage 触发面板",
+  "class_prefix": "YuDynamicstagepan",
+  "symbol_prefix": "yu_dynamicstagepan",
+  "package": "com.yu.dynamicstagepan",
+  "bundle": "com.apple.springboard",
+  "sdk_version": "16.5",
+  "minimum_ios": "14.0",
+  "preferences": false,
+  "slider": false,
+  "github_actions": false
+}
