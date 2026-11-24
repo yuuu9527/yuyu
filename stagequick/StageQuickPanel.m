@@ -21,6 +21,7 @@ static UIWindow *sqWindow; static NSMutableArray *sqRecent;
 @class YUStageQuickController;
 static YUStageQuickController *sqController;
 static void sqLaunch(NSString *bid);
+static BOOL sqEnabled(void);
 @interface YUStageQuickController:UIViewController<UITableViewDataSource,UITableViewDelegate,UITextFieldDelegate>
 @property(nonatomic,strong) UITableView *list;
 @property(nonatomic,strong) UITextField *search;
