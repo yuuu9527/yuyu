@@ -12,7 +12,7 @@ static NSString * const YUSQCDefaults = @"me.tomt000.stageduo.prefs";
 // Separate from Dynamic Stage's gesture setting:
 // 0 = Original, 1 = Fullscreen, 2 = Combination link.
 static NSInteger YUSQCOpenMode(void) {
-    NSNumber *mode = [[NSUserDefaults alloc] initWithSuiteName:YUSQCDefaults][@"yuStageQuickOpenMode"];
+    NSNumber *mode = [[[NSUserDefaults alloc] initWithSuiteName:YUSQCDefaults] objectForKey:@"yuStageQuickOpenMode"];
     return mode ? mode.integerValue : 1;
 }
 static BOOL YUSQCOpenCombination(NSString *bundleID) {
