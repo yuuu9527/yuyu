@@ -1,0 +1,13 @@
+#!/bin/sh
+set -e
+# Restore Dynamic Stage's original settings page after removal/purge.
+if [ "$1" = remove ] || [ "$1" = purge ]; then
+    base="/Library/PreferenceBundles/stageduoprefs.bundle"
+    backup="/var/mobile/Library/Preferences/com.yu.stagequickcompanion.original-Misc.plist"
+    if [ -f "$backup" ]; then
+        mkdir -p "$base"
+        cp -p "$backup" "$base/Misc.plist"
+        rm -f "$backup"
+    fi
+fi
+exit 0

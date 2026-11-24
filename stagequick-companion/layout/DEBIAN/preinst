@@ -1,0 +1,11 @@
+#!/bin/sh
+set -e
+# dpkg refuses a shared path unless the replacing package declares Replaces.
+# Preserve the original preference page for clean removal/rollback.
+base="/Library/PreferenceBundles/stageduoprefs.bundle"
+backup="/var/mobile/Library/Preferences/com.yu.stagequickcompanion.original-Misc.plist"
+if [ -f "$base/Misc.plist" ] && [ ! -f "$backup" ]; then
+    mkdir -p "$(dirname "$backup")"
+    cp -p "$base/Misc.plist" "$backup"
+fi
+exit 0
