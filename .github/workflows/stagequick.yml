@@ -44,7 +44,7 @@ jobs:
           dpkg-deb -c "$deb"
           dpkg-deb -x "$deb" "$RUNNER_TEMP/root"
           bin="$RUNNER_TEMP/root/Library/MobileSubstrate/DynamicLibraries/StageQuick.dylib"
-          lipo -verify_arch arm64 arm64e "$bin"
+          lipo "$bin" -verify_arch arm64 arm64e
           otool -arch arm64e -L "$bin" | tee "$RUNNER_TEMP/libraries"
           grep -F '@loader_path/.jbroot/usr/lib/libsubstrate.dylib' "$RUNNER_TEMP/libraries"
           test "$(find "$RUNNER_TEMP/root" -name '*.dylib' | wc -l)" -eq 1
